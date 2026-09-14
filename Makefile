@@ -7,7 +7,8 @@
 include $(TOPDIR)/rules.mk
 
 LUCI_TITLE:=Prism - luminous aurora / glassmorphism theme
-LUCI_DEPENDS:=+luci-base
+# luci-mod-status provides luci-bwc and the rpcd ACL for luci/getRealtimeStats (traffic card)
+LUCI_DEPENDS:=+luci-base +luci-mod-status
 PKG_LICENSE:=Apache-2.0
 PKG_VERSION:=1.0.0
 PKG_RELEASE:=1

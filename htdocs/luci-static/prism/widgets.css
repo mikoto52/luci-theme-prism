@@ -494,6 +494,89 @@ svg text { fill: var(--ink-2); }
 /* realtime graph container */
 #view svg[id$="graph"], .realtime svg, svg.realtime { border-radius: var(--r-md); background: rgba(0,0,0,.25); }
 
+/* ---------- realtime traffic card (view/status/include/15_prism_traffic.js) ---------- */
+
+.prism-traffic { display: flex; flex-direction: column; gap: 12px; }
+
+.prism-traffic-devs { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.prism-traffic .prism-chip {
+	min-height: 30px;
+	padding: 4px 12px;
+	border-radius: 999px;
+	font: 600 .78rem/1 var(--mono);
+	color: var(--ink-2);
+	background: rgba(255,255,255,.04);
+	border-color: var(--line);
+	box-shadow: none;
+}
+.prism-traffic .prism-chip small {
+	margin-left: 2px;
+	padding: 2px 6px;
+	border-radius: 6px;
+	font: 700 .6rem/1 var(--font);
+	letter-spacing: .08em;
+	color: var(--cyan);
+	background: rgba(34,211,238,.12);
+}
+.prism-traffic .prism-chip.active {
+	color: #fff;
+	border-color: rgba(168,85,247,.55);
+	background: var(--spectrum-soft);
+	box-shadow: 0 0 16px -4px rgba(168,85,247,.75);
+}
+
+.prism-traffic-plot {
+	position: relative;
+	height: 220px;
+	overflow: hidden;
+	border-radius: var(--r-md);
+	color: var(--ink);
+	background: rgba(0,0,0,.22);
+	border: 1px solid var(--line);
+}
+.prism-traffic-plot svg { display: block; width: 100%; height: 100%; }
+.prism-traffic-plot .grid { stroke: currentColor; stroke-opacity: .07; stroke-dasharray: 4 6; }
+.prism-traffic-plot .grid.max { stroke-opacity: .12; stroke-dasharray: none; }
+
+.prism-traffic-lbl {
+	position: absolute;
+	left: 10px;
+	padding: 1px 6px;
+	border-radius: 6px;
+	font: 600 .68rem/1.4 var(--mono);
+	color: var(--ink-3);
+	background: rgba(7,6,15,.55);
+	transform: translateY(-50%);
+	pointer-events: none;
+}
+.prism-traffic-lbl:first-of-type { transform: none; top: 6px !important; }
+
+.prism-traffic-wait { position: absolute; inset: 0; display: grid; place-items: center; color: var(--ink-3); }
+
+.prism-traffic-axis { display: flex; justify-content: space-between; margin-top: -6px; padding: 0 4px; font: .68rem var(--mono); color: var(--ink-3); }
+
+.prism-traffic-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+
+.prism-traffic-stat {
+	--c: var(--cyan);
+	padding: 12px 16px;
+	border-radius: 12px;
+	background: linear-gradient(90deg, color-mix(in srgb, var(--c) 12%, transparent), rgba(0,0,0,.15));
+	border: 1px solid var(--line);
+	border-left: 3px solid var(--c);
+}
+.prism-traffic-stat.tx { --c: var(--pink); }
+.prism-traffic-stat .k { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.prism-traffic-stat .v { margin: 2px 0 4px; font: 700 1.4rem/1.2 var(--mono); color: #fff; text-shadow: 0 0 14px var(--c); }
+.prism-traffic-stat .sub { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: .78rem; color: var(--ink-3); }
+.prism-traffic-stat .sub b { font-family: var(--mono); font-weight: 600; color: var(--ink-2); }
+
+@media (max-width: 600px) {
+	.prism-traffic-plot { height: 170px; }
+	.prism-traffic-stats { grid-template-columns: 1fr; }
+}
+
 /* ---------- responsive tables ---------- */
 
 @media (max-width: 767px) {

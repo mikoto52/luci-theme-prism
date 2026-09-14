@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prism · traffic include harness</title>
+<link rel="stylesheet" href="../htdocs/luci-static/prism/cascade.css">
+</head>
+<body>
+<div class="prism-bg" aria-hidden="true">
+	<span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span>
+	<span class="grid"></span><span class="noise"></span>
+</div>
+
+<div style="max-width: 1100px; margin: 0 auto; padding: 32px 16px">
+	<h2>Traffic include harness</h2>
+	<p style="color: var(--ink-3)">Loads the real <code>15_prism_traffic.js</code> with stand-ins for the LuCI runtime and a simulated luci-bwc feed (with a 30 s gap in the history).</p>
+
+	<!-- same wrapper view/status/index.js builds for each include -->
+	<div class="cbi-section" id="sec" style="display: none">
+		<div class="cbi-title"><h3 style="display: flex; justify-content: space-between">-</h3></div>
+		<div id="box"></div>
+	</div>
+</div>
+
+<script>
+/* ---- LuCI runtime stand-ins ---- */
+window._ = (s) => s;
+window.L = { env: { media: '/luci-static/prism' }, resolveDefault: (p, d) => Promise.resolve(p).catch(() => d) };
+
+/* mirrors LuCI dom.append: non-element children (even null) become text nodes */
+window.E = function (tag, attrs, children) {
+	const el = document.createElement(tag);
+	for (const k in (attrs || {})) {
+		const v = attrs[k];
+		if (v == null) continue;
+		if (typeof v === 'function') el.addEventListener(k, v);
+		else el.setAttribute(k, v);
+	}
+	if (Array.isArray(children))
+		children.forEach((c) => el.appendChild(c instanceof Node ? c : document.createTextNode(`${c}`)));
+	else if (children != null)
+		el.appendChild(children instanceof Node ? children : document.createTextNode(`${children}`));
+	return el;
+};
+
+/* ---- simulated luci-bwc ---- */
+const now = () => Math.floor(Date.now() / 1000);
+const feeds = {};
+
+function push(s, t, dev) {
+	const base = dev === 'map-mape' ? 6e6 : 6e5;
+	s.rx += Math.max(0, base * (0.6 + 0.4 * Math.sin(t / 9)) + (Math.random() - 0.3) * base * 0.6);
+	s.tx += Math.max(0, base * 0.25 * (0.6 + 0.4 * Math.cos(t / 7)) + Math.random() * base * 0.1);
+	s.rows.push([ t, Math.round(s.rx), 0, Math.round(s.tx), 0 ]);
+}
+
+function feed(dev) {
+	let s = feeds[dev];
+	if (!s) {
+		s = feeds[dev] = { rows: [], rx: 1.4e13, tx: 3.5e12 };
+		for (let t = now() - 90; t <= now(); t++) push(s, t, dev);
+		s.rows.splice(40, 30);   /* history gap: counters keep counting, rows are missing */
+	}
+	for (let t = s.rows[s.rows.length - 1][0] + 1; t <= now(); t++) push(s, t, dev);
+	s.rows = s.rows.slice(-256);
+	return s.rows.map((r) => r.slice());
+}
+
+const calls = [];
+const rpc = { declare: (spec) => (mode, dev) => { calls.push([ spec.method, mode, dev ]); return new Promise((r) => setTimeout(() => r(feed(dev)), 40)); } };
+
+const mkdev = (name, up = true, port = false) => ({ getName: () => name, isUp: () => up, isBridgePort: () => port });
+const network = {
+	getWANNetworks: () => Promise.resolve([ { getL3Device: () => mkdev('map-mape') } ]),
+	getWAN6Networks: () => Promise.resolve([ { getL3Device: () => mkdev('eth1') } ]),
+	getDevices: () => Promise.resolve([ mkdev('lo'), mkdev('br-lan'), mkdev('eth0', true, true), mkdev('eth1'), mkdev('map-mape'), mkdev('wg0'), mkdev('wlan0', false) ])
+};
+const poll = { active: () => true };
+const baseclass = { extend: (proto) => { const C = function () {}; C.prototype = proto; return C; } };
+
+/* ---- load like LuCI: 'require' names become function parameters ---- */
+(async () => {
+	const src = await fetch('../htdocs/luci-static/resources/view/status/include/15_prism_traffic.js', { cache: 'no-store' }).then((r) => r.text());
+	const Cls = new Function('baseclass', 'rpc', 'network', 'poll', src)(baseclass, rpc, network, poll);
+	const inc = new Cls();
+	const sec = document.getElementById('sec'), box = document.getElementById('box');
+
+	sec.querySelector('h3').textContent = inc.title;
+
+	/* view/status/index.js re-runs load()+render() every poll cycle and swaps content */
+	let cycles = 0;
+	const cycle = async () => {
+		const content = inc.render(await inc.load());
+		if (content != null) {
+			sec.style.display = '';
+			while (box.firstChild) box.removeChild(box.firstChild);
+			box.appendChild(content);
+		}
+		cycles++;
+	};
+
+	await cycle();
+	setInterval(cycle, 5000);
+	window.__pt = { inc, calls, cycles: () => cycles };
+})().catch((e) => { document.body.insertAdjacentHTML('beforeend', `<pre id="err">${e.stack}</pre>`); });
+</script>
+</body>
+</html>

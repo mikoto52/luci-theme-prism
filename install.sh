@@ -19,7 +19,9 @@ if [ "$1" = "uninstall" ]; then
 	uci set luci.main.mediaurlbase="$prev"
 	uci -q delete luci.themes.Prism || true
 	uci commit luci
-	rm -rf "$WWW/prism" "$TPL" "$WWW/resources/menu-prism.js" "$PREV"
+	rm -rf "$WWW/prism" "$TPL" "$PREV" \
+		"$WWW/resources/menu-prism.js" \
+		"$WWW/resources/view/status/include/15_prism_traffic.js"
 	clear_cache
 	echo "Prism removed, theme restored to $prev"
 	exit 0
@@ -36,7 +38,7 @@ fi
 
 mkdir -p "$WWW/prism" "$TPL"
 cp -r htdocs/luci-static/prism/. "$WWW/prism/"
-cp htdocs/luci-static/resources/menu-prism.js "$WWW/resources/"
+cp -r htdocs/luci-static/resources/. "$WWW/resources/"
 cp ucode/template/themes/prism/*.ut "$TPL/"
 
 cur="$(uci -q get luci.main.mediaurlbase || true)"
