@@ -1,0 +1,526 @@
+/* ==========================================================================
+   Prism · widgets — cards, tables, badges, progress, alerts, modal, tooltip
+   ========================================================================== */
+
+/* ---------- maps & glass cards ---------- */
+
+.cbi-map { margin-bottom: 24px; }
+.cbi-map-descr, .cbi-section-descr { max-width: 80ch; margin: -4px 0 20px; color: var(--ink-2); }
+
+.cbi-section, .cbi-map > fieldset, fieldset.cbi-section {
+	position: relative;
+	isolation: isolate;
+	margin: 0 0 22px;
+	padding: 22px 24px;
+	border-radius: var(--r-lg);
+	background: var(--glass);
+	-webkit-backdrop-filter: var(--blur);
+	backdrop-filter: var(--blur);
+	border: 1px solid var(--line);
+	box-shadow: var(--shadow);
+	animation: rise .7s var(--ease) both;
+}
+
+.cbi-section:nth-of-type(2) { animation-delay: .06s; }
+.cbi-section:nth-of-type(3) { animation-delay: .12s; }
+.cbi-section:nth-of-type(4) { animation-delay: .18s; }
+.cbi-section:nth-of-type(n+5) { animation-delay: .24s; }
+
+/* gradient hairline border */
+.cbi-section::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	border-radius: inherit;
+	padding: 1px;
+	background: linear-gradient(140deg, rgba(34,211,238,.45), rgba(255,255,255,.02) 30%, rgba(255,255,255,.02) 70%, rgba(244,114,182,.45));
+	-webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+	-webkit-mask-composite: xor;
+	mask-composite: exclude;
+	pointer-events: none;
+}
+
+/* pointer spotlight (coordinates set by menu-prism.js) */
+.cbi-section::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	border-radius: inherit;
+	background: radial-gradient(420px circle at var(--mx, -500px) var(--my, -500px), rgba(168,85,247,.13), transparent 60%);
+	opacity: 0;
+	transition: opacity .4s;
+	pointer-events: none;
+}
+.cbi-section:hover::after { opacity: 1; }
+
+/* backdrop-filter + isolation make each card its own stacking context, so an
+   open dropdown would be painted under the next card — lift the active card */
+.cbi-section:focus-within,
+.cbi-section:has(.cbi-dropdown[open]) { z-index: 20; }
+
+.cbi-section .cbi-section { /* nested sections go flat */
+	padding: 16px 18px;
+	background: rgba(0,0,0,.18);
+	-webkit-backdrop-filter: none;
+	backdrop-filter: none;
+	box-shadow: none;
+	animation: none;
+}
+.cbi-section .cbi-section::before, .cbi-section .cbi-section::after { display: none; }
+
+.cbi-section > h3, .cbi-section > legend, .cbi-section-node > h3, .cbi-title-section > h3 {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin: 0 0 14px;
+	padding: 0;
+	font-size: 1.02rem;
+	font-weight: 700;
+	letter-spacing: -.005em;
+}
+.cbi-section > h3::before, .cbi-section > legend::before {
+	content: "";
+	width: 4px; height: 18px;
+	border-radius: 4px;
+	background: var(--spectrum);
+	box-shadow: 0 0 12px rgba(168,85,247,.8);
+}
+
+.cbi-section-node { position: relative; }
+.cbi-section-remove { display: flex; justify-content: flex-end; margin-top: 6px; }
+.cbi-section-create { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 16px; }
+.cbi-section-create > * { margin: 0; }
+
+.cbi-tblsection .cbi-section-node, .cbi-section-table-titles { border-radius: var(--r-md); }
+
+/* ---------- tables ---------- */
+
+.table, table { display: table; width: 100%; border-collapse: separate; border-spacing: 0; }
+.tr { display: table-row; }
+.th, .td { display: table-cell; }
+.thead { display: table-header-group; }
+.tbody { display: table-row-group; }
+
+.table .th, table th {
+	padding: 10px 12px;
+	text-align: left;
+	vertical-align: bottom;
+	font-size: .72rem;
+	font-weight: 700;
+	letter-spacing: .1em;
+	text-transform: uppercase;
+	color: var(--ink-3);
+	border-bottom: 1px solid var(--line-strong);
+	white-space: nowrap;
+}
+
+.table .td, table td {
+	padding: 11px 12px;
+	vertical-align: middle;
+	color: var(--ink);
+	border-bottom: 1px solid var(--line);
+	word-break: break-word;
+}
+
+.table .tr:last-child .td, table tr:last-child td { border-bottom: 0; }
+
+.table .tr:not(.table-titles):not(.cbi-section-table-titles) { transition: background .2s; }
+.table .tr:not(.table-titles):not(.cbi-section-table-titles):hover > .td {
+	background: linear-gradient(90deg, rgba(168,85,247,.09), rgba(34,211,238,.05));
+}
+.table .tr:hover > .td:first-child { box-shadow: inset 2px 0 0 var(--violet); }
+
+/* key/value status tables: first column is the label */
+.cbi-section > .table:not(.cbi-section-table) .tr > .td:first-child,
+.cbi-section > table:not(.cbi-section-table) tr > td:first-child { width: 33%; color: var(--ink-2); font-weight: 560; }
+
+.td.cbi-section-actions, .td.cbi-section-table-cell.cbi-section-actions { text-align: right; white-space: nowrap; }
+.td.cbi-section-actions > div { display: inline-flex; gap: 6px; }
+.td .cbi-button { min-height: 32px; padding: 5px 12px; font-size: .8rem; border-radius: 9px; }
+
+.tr.placeholder > .td, .td.placeholder { padding: 28px; text-align: center; color: var(--ink-3); font-style: italic; }
+
+.tr.drag-over-above > .td { box-shadow: inset 0 2px 0 var(--cyan); }
+.tr.drag-over-below > .td { box-shadow: inset 0 -2px 0 var(--cyan); }
+.td.cbi-section-actions .drag-handle { cursor: grab; color: var(--ink-3); padding: 0 6px; }
+
+/* ---------- badges ---------- */
+
+.label, .badge {
+	display: inline-flex; align-items: center; gap: 5px;
+	padding: 2px 9px;
+	border-radius: 999px;
+	font-size: .74rem; font-weight: 650;
+	color: #e9d5ff;
+	background: rgba(168,85,247,.16);
+	border: 1px solid rgba(168,85,247,.35);
+	white-space: nowrap;
+}
+.label.success, .label.notice { color: #a7f3d0; background: rgba(52,211,153,.14); border-color: rgba(52,211,153,.35); }
+.label.warning { color: #fde68a; background: rgba(251,191,36,.14); border-color: rgba(251,191,36,.35); }
+.label.important, .label.danger, .label.error { color: #fecdd3; background: rgba(251,113,133,.14); border-color: rgba(251,113,133,.35); }
+
+.ifacebadge, .zonebadge {
+	display: inline-flex; align-items: center; gap: 6px;
+	padding: 4px 10px;
+	border-radius: 10px;
+	font-size: .82rem;
+	color: var(--ink);
+	background: rgba(255,255,255,.05);
+	border: 1px solid var(--line-strong);
+	white-space: nowrap;
+}
+.ifacebadge img, .zonebadge img { width: 16px; height: 16px; vertical-align: middle; }
+.zonebadge { color: #120f24; font-weight: 650; border-color: rgba(0,0,0,.15); text-shadow: none; }
+.zonebadge .ifacebadge { color: var(--ink); background: rgba(15,12,30,.75); }
+.ifacebadge-active { border-color: var(--green); box-shadow: 0 0 12px -2px rgba(52,211,153,.6); }
+
+/* network interface boxes (Network → Interfaces) */
+.ifacebox {
+	display: inline-flex; flex-direction: column;
+	min-width: 110px;
+	overflow: hidden;
+	border-radius: 14px;
+	text-align: center;
+	background: rgba(0,0,0,.25);
+	border: 1px solid var(--line-strong);
+}
+.ifacebox-head {
+	padding: 6px 10px;
+	font-weight: 700;
+	color: #120f24;
+	background: var(--spectrum);
+}
+.ifacebox-head.active { box-shadow: 0 0 16px rgba(168,85,247,.8); }
+.ifacebox-body { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px; font-size: .82rem; }
+.network-status-table { display: flex; flex-wrap: wrap; gap: 12px; }
+.network-status-table .ifacebox { flex: 1 1 260px; }
+
+/* ---------- progress bars ---------- */
+
+.cbi-progressbar {
+	position: relative;
+	width: 100%;
+	min-width: 170px;
+	height: 26px;
+	overflow: hidden;
+	border-radius: 999px;
+	background: rgba(0,0,0,.35);
+	border: 1px solid var(--line);
+	box-shadow: inset 0 2px 6px rgba(0,0,0,.4);
+}
+
+.cbi-progressbar > div {
+	height: 100%;
+	border-radius: inherit;
+	background:
+		repeating-linear-gradient(-45deg, rgba(255,255,255,.14) 0 8px, transparent 8px 16px),
+		linear-gradient(90deg, var(--cyan), var(--violet) 60%, var(--pink));
+	background-size: 22.6px 22.6px, 100% 100%;
+	box-shadow: 0 0 18px -2px rgba(168,85,247,.85), inset 0 1px 0 rgba(255,255,255,.35);
+	animation: barflow 1.2s linear infinite;
+	transition: width .8s var(--ease);
+}
+
+.cbi-progressbar::before {
+	content: attr(title);
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	display: flex; align-items: center; justify-content: center;
+	padding: 0 12px;
+	font: 650 .76rem/1 var(--mono);
+	color: #fff;
+	text-shadow: 0 1px 3px rgba(0,0,0,.85);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+@keyframes barflow { to { background-position: 22.6px 0, 0 0; } }
+
+/* ---------- alerts & notifications ---------- */
+
+.alert-message {
+	position: relative;
+	margin: 0 0 18px;
+	padding: 16px 20px 16px 58px;
+	border-radius: var(--r-md);
+	color: var(--ink);
+	background: linear-gradient(90deg, rgba(168,85,247,.2), rgba(168,85,247,.05));
+	border: 1px solid rgba(168,85,247,.35);
+	-webkit-backdrop-filter: var(--blur);
+	backdrop-filter: var(--blur);
+	box-shadow: 0 16px 40px -20px rgba(0,0,0,.9);
+	/* "backwards", not "both": a held end state would pin opacity and block the .fade-out transition */
+	animation: rise .5s var(--ease) backwards;
+}
+.alert-message::before {
+	content: "✦";
+	position: absolute; left: 16px; top: 15px;
+	display: grid; place-items: center;
+	width: 28px; height: 28px;
+	border-radius: 9px;
+	font-size: 14px;
+	color: #fff;
+	background: var(--violet);
+	box-shadow: 0 0 16px var(--violet);
+}
+.alert-message h4 { margin: 0 0 4px; }
+.alert-message p:last-child { margin-bottom: 0; }
+.alert-message .right { margin-top: 10px; }
+.alert-message > .btn:first-child:last-child { margin-top: 8px; }
+
+.alert-message.warning { background: linear-gradient(90deg, rgba(251,191,36,.18), rgba(251,191,36,.04)); border-color: rgba(251,191,36,.4); }
+.alert-message.warning::before { content: "!"; font-weight: 800; color: #1a1400; background: var(--amber); box-shadow: 0 0 16px var(--amber); }
+.alert-message.error, .alert-message.danger { background: linear-gradient(90deg, rgba(251,113,133,.2), rgba(251,113,133,.04)); border-color: rgba(251,113,133,.45); }
+.alert-message.error::before, .alert-message.danger::before { content: "×"; font-size: 20px; background: var(--red); box-shadow: 0 0 16px var(--red); }
+.alert-message.success, .alert-message.notice { background: linear-gradient(90deg, rgba(52,211,153,.18), rgba(52,211,153,.04)); border-color: rgba(52,211,153,.4); }
+.alert-message.success::before, .alert-message.notice::before { content: "✓"; color: #032016; background: var(--green); box-shadow: 0 0 16px var(--green); }
+.alert-message.info::before { content: "i"; font-weight: 800; color: #031a20; background: var(--cyan); box-shadow: 0 0 16px var(--cyan); }
+.alert-message.info { background: linear-gradient(90deg, rgba(34,211,238,.18), rgba(34,211,238,.04)); border-color: rgba(34,211,238,.4); }
+
+/* ---------- loading ---------- */
+
+.spinning { position: relative; padding-left: 34px !important; }
+.spinning::before {
+	content: "";
+	position: absolute;
+	left: 8px; top: 50%;
+	width: 18px; height: 18px;
+	margin-top: -9px;
+	border-radius: 50%;
+	border: 2px solid rgba(255,255,255,.1);
+	border-top-color: var(--cyan);
+	border-right-color: var(--violet);
+	animation: spin .8s linear infinite;
+}
+#view > .spinning, p.spinning { display: inline-flex; padding: 14px 20px 14px 46px !important; border-radius: 12px; background: var(--glass); border: 1px solid var(--line); }
+#view > .spinning::before, p.spinning::before { left: 16px; }
+
+/* ---------- modal ---------- */
+
+#modal_overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 900;
+	overflow-y: auto;
+	visibility: hidden;
+	opacity: 0;
+	background: rgba(4,3,10,.62);
+	-webkit-backdrop-filter: blur(10px) saturate(120%);
+	backdrop-filter: blur(10px) saturate(120%);
+	transition: opacity .3s, visibility .3s;
+}
+.modal-overlay-active #modal_overlay { visibility: visible; opacity: 1; }
+.modal-overlay-active { overflow: hidden; }
+
+#modal_overlay > .modal {
+	position: relative;
+	width: min(92vw, 720px);
+	margin: 8vh auto;
+	padding: 26px 28px;
+	border-radius: var(--r-lg);
+	background: linear-gradient(180deg, rgba(34,28,70,.95), rgba(16,13,34,.97));
+	border: 1px solid rgba(168,85,247,.35);
+	box-shadow: 0 40px 100px -30px #000, 0 0 60px -20px rgba(168,85,247,.6);
+	transform: translateY(20px) scale(.97);
+	transition: transform .45s cubic-bezier(.2, 1.3, .4, 1);
+}
+.modal-overlay-active #modal_overlay > .modal { transform: none; }
+#modal_overlay > .modal.cbi-modal { width: min(94vw, 960px); }
+#modal_overlay > .modal > h4 { font-size: 1.2rem; margin-bottom: 14px; }
+#modal_overlay > .modal .right, #modal_overlay > .modal .button-row { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; margin-top: 18px; }
+#modal_overlay > .modal > .alert-message { margin-top: 12px; }
+#modal_overlay .cbi-section { background: rgba(0,0,0,.2); animation: none; }
+
+/* uci changes diff inside modal */
+.uci-change-list { font-family: var(--mono); font-size: .82rem; }
+.uci-change-list del, .uci-change-list ins, .uci-change-list var { display: block; padding: 3px 10px; border-radius: 6px; text-decoration: none; font-style: normal; }
+.uci-change-list ins { color: #a7f3d0; background: rgba(52,211,153,.12); }
+.uci-change-list del { color: #fecdd3; background: rgba(251,113,133,.12); }
+.uci-change-list var { color: var(--ink-2); }
+.uci-change-legend { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 10px; font-size: .8rem; }
+
+/* ---------- tooltip ---------- */
+
+.cbi-tooltip-container { position: relative; cursor: help; }
+.cbi-tooltip {
+	position: absolute;
+	z-index: 1110;
+	left: -10000px;
+	max-width: 420px;
+	padding: 8px 12px;
+	border-radius: 10px;
+	font-size: .82rem;
+	white-space: pre-line;
+	color: var(--ink);
+	background: rgba(20,17,40,.96);
+	border: 1px solid rgba(168,85,247,.35);
+	box-shadow: 0 16px 40px -12px #000;
+	opacity: 0;
+	transition: opacity .2s;
+	pointer-events: none;
+}
+.cbi-tooltip-container:hover .cbi-tooltip:not(:empty) { left: auto; opacity: 1; }
+.cbi-tooltip.error { border-color: var(--red); color: #fecdd3; }
+.cbi-tooltip.success { border-color: var(--green); }
+
+/* ---------- tab panes ----------
+   ui.js only flips data-tab-active; the theme must collapse inactive panes.
+   Panes are often .cbi-section cards, so padding/margin/border go too. */
+
+[data-tab-title]:not([data-tab-active="true"]) {
+	height: 0;
+	margin: 0 !important;
+	padding: 0 !important;
+	border: 0 !important;
+	opacity: 0;
+	overflow: hidden;
+	box-shadow: none;
+	animation: none;
+}
+
+[data-tab-title]:not([data-tab-active="true"])::before,
+[data-tab-title]:not([data-tab-active="true"])::after { display: none; }
+
+[data-tab-active="true"] {
+	height: auto;
+	opacity: 1;
+	overflow: visible;
+	animation: rise .45s var(--ease) both;
+}
+
+.tab-content > .tab-pane, .tab-content > div { display: none; }
+
+/* ---------- file browser widget (hidden until ui.js adds .open) ---------- */
+
+.cbi-filebrowser {
+	display: flex;
+	flex-direction: column;
+	min-width: 210px;
+	max-width: 100%;
+	height: 0;
+	opacity: 0;
+	overflow: hidden;
+	border-radius: 12px;
+	background: rgba(0,0,0,.3);
+	border: 1px solid var(--line-strong);
+}
+.cbi-filebrowser.open { height: auto; opacity: 1; overflow: visible; margin-top: 8px; transition: opacity .25s; }
+.cbi-filebrowser > * { max-width: 100%; margin: 6px 8px 0; padding: 0 0 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border-bottom: 1px solid var(--line); }
+.cbi-filebrowser > div { border-bottom: 0; }
+.cbi-filebrowser > ul { list-style: none; }
+.cbi-filebrowser > ul > li { display: flex; align-items: center; gap: 6px; padding: 3px 6px; border-radius: 8px; }
+.cbi-filebrowser > ul > li:hover { background: rgba(168,85,247,.12); }
+.cbi-filebrowser > ul > li > div:first-child { flex: 10; overflow: hidden; text-overflow: ellipsis; }
+.cbi-filebrowser > ul > li > div:last-child { flex: 3; text-align: right; }
+.cbi-filebrowser > ul > li > div:last-child > button { min-height: 28px; margin: 1px 0 1px 4px; padding: 2px 8px; }
+.cbi-filebrowser .upload { display: flex; flex-wrap: wrap; gap: 4px; }
+.cbi-filebrowser .upload > * { flex: 1; }
+.cbi-filebrowser .upload > div { flex: 10; min-width: 150px; }
+.cbi-filebrowser .upload > div > input { width: 100%; }
+
+.cbi-dynlist > .item.dragging { opacity: .5; }
+.cbi-dynlist > .item.drag-over,
+.cbi-dynlist > .add-item > .cbi-input-text.drag-over,
+.cbi-dynlist > .add-item > .cbi-button-add.drag-over { box-shadow: inset 0 2px 0 var(--cyan); }
+
+/* ---------- state classes toggled by ui.js / form.js ---------- */
+
+/* notifications are removed on transitionend after .fade-out, so a real transition must run */
+.alert-message.fade-in { animation: rise .4s var(--ease) backwards; }
+.alert-message.fade-out { animation: none; opacity: 0; transform: translateY(-6px); transition: opacity .4s, transform .4s; }
+.fade-in { animation: prism-fade-in .4s ease; }
+.fade-out { animation: prism-fade-out .4s ease; }
+@keyframes prism-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes prism-fade-out { from { opacity: 1; } to { opacity: 0; } }
+
+/* tab/row/map highlight after validation errors or reorder */
+.flash { animation: prism-flash .45s ease; }
+@keyframes prism-flash { 0% { box-shadow: 0 0 0 0 rgba(168,85,247,0); } 40% { box-shadow: 0 0 0 3px rgba(168,85,247,.55), 0 0 24px rgba(168,85,247,.5); } 100% { box-shadow: 0 0 0 0 rgba(168,85,247,0); } }
+
+.cbi-tab-descr { margin: -6px 0 18px; color: var(--ink-2); }
+
+.cbi-title-ref { color: var(--cyan); }
+.cbi-title-ref::after { content: "➙"; margin-left: 4px; }
+
+th[data-sortable-row], .th[data-sortable-row], label[for] { cursor: pointer; }
+th[data-sort-direction="asc"]::after, .th[data-sort-direction="asc"]::after { content: "\a0\25b2"; color: var(--cyan); }
+th[data-sort-direction="desc"]::after, .th[data-sort-direction="desc"]::after { content: "\a0\25bc"; color: var(--cyan); }
+
+.close { float: right; font-size: 20px; font-weight: 700; line-height: 1; color: var(--ink); opacity: .45; cursor: pointer; }
+.close:hover { opacity: .8; }
+
+form.inline { display: inline; margin-bottom: 0; }
+
+.btn.disabled, .cbi-button.disabled { opacity: .45; pointer-events: none; box-shadow: none; }
+
+.cbi-rowstyle-2 > .td { background: rgba(255,255,255,.015); }
+
+var[data-tooltip], .cbi-value var.cbi-tooltip-container { font-style: normal; cursor: help; border-bottom: 1px dotted var(--cyan); }
+var.cbi-tooltip-container .cbi-tooltip { white-space: normal; }
+
+/* "Unsaved changes" dialog */
+#modal_overlay > .modal.uci-dialog { width: min(94vw, 900px); }
+.uci-dialog del, .uci-dialog ins, .uci-dialog var { display: block; font: .82rem/1.5 var(--mono); font-style: normal; text-decoration: none; color: var(--ink); }
+.uci-dialog div > del, .uci-dialog div > ins, .uci-dialog div > var {
+	position: relative;
+	margin-bottom: 3px;
+	padding: 3px 10px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	border-radius: 8px;
+	background: rgba(0,0,0,.25);
+	border: 1px solid var(--line);
+}
+.uci-dialog div > ins, .uci-dialog var > ins { color: #a7f3d0; background: rgba(52,211,153,.12); border-color: rgba(52,211,153,.35); }
+.uci-dialog div > del, .uci-dialog var > del { color: #fecdd3; background: rgba(251,113,133,.12); border-color: rgba(251,113,133,.35); }
+
+/* ---------- misc LuCI bits ---------- */
+
+.cbi-map-tabbed > .cbi-section, .cbi-tabcontainer { animation: rise .45s var(--ease) both; }
+.cbi-section-error { padding: 10px 14px; border-radius: 10px; color: #fecdd3; background: rgba(251,113,133,.12); border: 1px solid rgba(251,113,133,.35); }
+.cbi-section-error ul { margin: 0; padding-left: 18px; }
+
+#syslog, #dmesg, textarea#syslog { font-family: var(--mono); font-size: .8rem; background: rgba(0,0,0,.45); color: #c7f9ff; }
+
+img[src*="/luci-static/resources/icons/"] { filter: drop-shadow(0 0 4px rgba(168,85,247,.35)); }
+
+svg text { fill: var(--ink-2); }
+
+/* realtime graph container */
+#view svg[id$="graph"], .realtime svg, svg.realtime { border-radius: var(--r-md); background: rgba(0,0,0,.25); }
+
+/* ---------- responsive tables ---------- */
+
+@media (max-width: 767px) {
+	.cbi-section { padding: 18px 16px; border-radius: 18px; }
+
+	.table.cbi-section-table .tr.table-titles,
+	.table.cbi-section-table .tr.cbi-section-table-titles,
+	.table.cbi-section-table .tr.cbi-section-table-descr { display: none; }
+
+	.table.cbi-section-table, .table.cbi-section-table .tbody { display: block; }
+	.table.cbi-section-table .tr {
+		display: flex; flex-wrap: wrap;
+		margin-bottom: 10px;
+		padding: 8px;
+		border-radius: 14px;
+		background: rgba(0,0,0,.2);
+		border: 1px solid var(--line);
+	}
+	.table.cbi-section-table .td { display: block; flex: 1 1 50%; border: 0; padding: 6px 8px; }
+	.table.cbi-section-table .td[data-title]::before {
+		content: attr(data-title);
+		display: block;
+		margin-bottom: 2px;
+		font-size: .68rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+		color: var(--ink-3);
+	}
+	.table.cbi-section-table .td.cbi-section-actions { flex-basis: 100%; text-align: left; }
+
+	.cbi-section > .table:not(.cbi-section-table) .tr > .td:first-child { width: 42%; }
+}

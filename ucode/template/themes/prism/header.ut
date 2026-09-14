@@ -1,0 +1,100 @@
+{#
+ Prism — a luminous aurora / glassmorphism theme for LuCI
+ Licensed under the Apache License, Version 2.0
+-#}
+{%
+	import { getuid, getspnam } from 'luci.core';
+
+	const boardinfo = ubus.call('system', 'board') ?? {};
+	const hostname = striptags(boardinfo.hostname ?? 'OpenWrt');
+	const model = striptags(boardinfo.model ?? '');
+	const pagetitle = striptags(dispatched?.title ? _(dispatched.title) : 'LuCI');
+
+	http.prepare_content('text/html; charset=UTF-8');
+-%}
+<!DOCTYPE html>
+<html lang="{{ dispatcher.lang }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#07060f">
+<title>{{ hostname }} · {{ pagetitle }} · LuCI</title>
+<link rel="stylesheet" href="{{ media }}/cascade.css">
+<link rel="icon" href="{{ media }}/favicon.svg" type="image/svg+xml">
+<script src="{{ dispatcher.build_url('admin/translations', dispatcher.lang) }}"></script>
+<script src="{{ resource }}/cbi.js"></script>
+{% if (node?.css): %}<link rel="stylesheet" href="{{ resource }}/{{ node.css }}">{% endif %}
+{% if (css): %}<style>{{ css }}</style>{% endif %}
+</head>
+<body class="lang_{{ dispatcher.lang }} {{ entityencode(striptags(node?.title ?? ''), true) }}{{ blank_page ? ' blank' : '' }}" data-page="{{ entityencode(join('-', ctx.request_path), true) }}">
+
+<div class="prism-bg" aria-hidden="true">
+	<span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span>
+	<span class="grid"></span><span class="noise"></span>
+</div>
+
+{% if (!blank_page): %}
+<aside id="sidebar">
+	<a class="brand" href="{{ dispatcher.build_url() }}">
+		<span class="brand-mark">
+			<svg viewBox="0 0 48 48" aria-hidden="true">
+				<defs><linearGradient id="pg" x1="0" y1="0" x2="1" y2="1">
+					<stop offset="0" stop-color="#22d3ee"/><stop offset=".5" stop-color="#a855f7"/><stop offset="1" stop-color="#f472b6"/>
+				</linearGradient></defs>
+				<path d="M24 4 44 40H4Z" fill="none" stroke="url(#pg)" stroke-width="3" stroke-linejoin="round"/>
+				<path d="M24 4 30 40M24 4 14 40" stroke="url(#pg)" stroke-width="1.5" opacity=".6"/>
+			</svg>
+		</span>
+		<span class="brand-text"><b>{{ hostname }}</b><small>{{ model }}</small></span>
+	</a>
+	<ul class="modes" id="modemenu" style="display:none"></ul>
+	<nav class="nav-scroll"><ul class="nav" id="topmenu" style="display:none"></ul></nav>
+	<div class="sidebar-foot">
+		<span class="dot"></span>{{ version.distname }} {{ version.distversion }}
+	</div>
+</aside>
+<div id="scrim"></div>
+
+<div id="shell">
+<header id="topbar">
+	<button id="navtoggle" type="button" aria-label="Menu"><span></span><span></span><span></span></button>
+	<div class="page-title">
+		<small>{{ hostname }}</small>
+		<strong>{{ pagetitle }}</strong>
+	</div>
+	<div class="topbar-right">
+		<div id="indicators" class="pull-right"></div>
+		<div id="clock" class="clock" aria-live="off"></div>
+	</div>
+</header>
+{% endif %}
+
+<div id="maincontent" class="container">
+{% if (getuid() == 0 && getspnam('root')?.pwdp === '' && join('-', ctx.request_path) != 'admin-system-admin'): %}
+	<div class="alert-message warning">
+		<h4>{{ _('No password set!') }}</h4>
+		<p>{{ _('There is no password set on this router. Please configure a root password to protect the web interface.') }}</p>
+		{% if (dispatcher.lookup("admin/system/admin")): %}
+		<div class="right"><a class="btn" href="{{ dispatcher.build_url("admin/system/admin") }}">{{ _('Go to password configuration...') }}</a></div>
+		{% endif %}
+	</div>
+{% endif %}
+
+{% if (boardinfo.rootfs_type == "initramfs"): %}
+	<div class="alert-message warning">
+		<h4>{{ _('System running in recovery (initramfs) mode.') }}</h4>
+		<p>{{ _('No changes to settings will be stored and are lost after rebooting. This mode should only be used to install a firmware upgrade') }}</p>
+		{% if (dispatcher.lookup("admin/system/flash")): %}
+		<div class="right"><a class="btn" href="{{ dispatcher.build_url("admin/system/flash") }}">{{ _('Go to firmware upgrade...') }}</a></div>
+		{% endif %}
+	</div>
+{% endif %}
+
+	<noscript>
+		<div class="alert-message warning">
+			<h4>{{ _('JavaScript required!') }}</h4>
+			<p>{{ _('You must enable JavaScript in your browser or LuCI will not work properly.') }}</p>
+		</div>
+	</noscript>
+
+	<div id="tabmenu" style="display:none"></div>

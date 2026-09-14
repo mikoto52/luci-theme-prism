@@ -1,0 +1,59 @@
+name: Build packages
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: ${{ matrix.release }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # the theme is PKGARCH:=all, so one x86_64 build installs on every architecture
+          - release: openwrt-24.10   # .ipk (opkg)
+            sdk: x86_64-openwrt-24.10
+          - release: openwrt-25.12   # .apk (apk-tools)
+            sdk: x86_64-openwrt-25.12
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Stage package as a feed
+        run: |
+          mkdir -p "$RUNNER_TEMP/feed/luci-theme-prism"
+          rsync -a --exclude .git --exclude .github --exclude preview ./ "$RUNNER_TEMP/feed/luci-theme-prism/"
+
+      - name: Build with OpenWrt SDK
+        uses: openwrt/gh-action-sdk@main
+        env:
+          ARCH: ${{ matrix.sdk }}
+          FEEDNAME: prism
+          FEED_DIR: ${{ runner.temp }}/feed
+          PACKAGES: luci-theme-prism
+          NO_REFRESH_CHECK: 1
+
+      - name: Collect packages
+        run: |
+          mkdir -p dist
+          find bin/packages -name 'luci-theme-prism*' \( -name '*.ipk' -o -name '*.apk' \) -exec cp {} dist/ \;
+          ls -la dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: luci-theme-prism-${{ matrix.release }}
+          path: dist/*
+
+      - name: Attach to release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*

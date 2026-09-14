@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prism · LuCI theme preview</title>
+<link rel="stylesheet" href="../htdocs/luci-static/prism/cascade.css">
+<link rel="icon" href="../htdocs/luci-static/prism/favicon.svg" type="image/svg+xml">
+<style>
+	/* preview-only helpers */
+	.chart { width: 100%; height: 220px; display: block; }
+	.chart-legend { display: flex; gap: 18px; margin-top: 10px; font-size: .82rem; color: var(--ink-2); }
+	.chart-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+	.two { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+	@media (max-width: 1100px) { .two { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body class="lang_ko Overview" data-page="admin-status-overview">
+
+<div class="prism-bg" aria-hidden="true">
+	<span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span>
+	<span class="grid"></span><span class="noise"></span>
+</div>
+
+<aside id="sidebar">
+	<a class="brand" href="#">
+		<span class="brand-mark">
+			<svg viewBox="0 0 48 48"><defs><linearGradient id="pg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset=".5" stop-color="#a855f7"/><stop offset="1" stop-color="#f472b6"/></linearGradient></defs><path d="M24 4 44 40H4Z" fill="none" stroke="url(#pg)" stroke-width="3" stroke-linejoin="round"/><path d="M24 4 30 40M24 4 14 40" stroke="url(#pg)" stroke-width="1.5" opacity=".6"/></svg>
+		</span>
+		<span class="brand-text"><b>OpenWrt</b><small>GL.iNet GL-MT6000</small></span>
+	</a>
+	<nav class="nav-scroll"><ul class="nav" id="topmenu"></ul></nav>
+	<div class="sidebar-foot"><span class="dot"></span>OpenWrt 24.10.2</div>
+</aside>
+<div id="scrim"></div>
+
+<div id="shell">
+<header id="topbar">
+	<button id="navtoggle" type="button" aria-label="Menu"><span></span><span></span><span></span></button>
+	<div class="page-title"><small>OpenWrt</small><strong>개요 · Overview</strong></div>
+	<div class="topbar-right">
+		<div id="indicators">
+			<span data-indicator="poll-status" data-clickable data-style="active">자동 새로고침 켜짐</span>
+			<span data-indicator="uci-changes" data-clickable data-style="inactive">변경 사항: 3</span>
+		</div>
+		<div id="clock" class="clock"></div>
+	</div>
+</header>
+
+<div id="maincontent" class="container">
+	<div id="tabmenu"><ul class="tabs">
+		<li class="active"><a href="#">개요</a></li><li><a href="#">방화벽</a></li><li><a href="#">라우팅</a></li><li><a href="#">시스템 로그</a></li><li><a href="#">실시간 그래프</a></li>
+	</ul></div>
+
+	<div class="cbi-map">
+		<h2>상태 개요</h2>
+		<div class="cbi-map-descr">라우터의 현재 상태를 한눈에 확인합니다. 모든 카드는 LuCI 기본 마크업을 그대로 스타일링한 것입니다.</div>
+
+		<div class="alert-message warning">
+			<h4>비밀번호가 설정되지 않았습니다!</h4>
+			<p>웹 인터페이스를 보호하려면 root 비밀번호를 설정하세요.</p>
+			<div class="right"><a class="btn" href="#">비밀번호 설정으로 이동…</a></div>
+		</div>
+
+		<div class="two">
+			<div class="cbi-section">
+				<h3>시스템</h3>
+				<table class="table">
+					<tr class="tr"><td class="td">호스트 이름</td><td class="td">OpenWrt</td></tr>
+					<tr class="tr"><td class="td">모델</td><td class="td">GL.iNet GL-MT6000</td></tr>
+					<tr class="tr"><td class="td">아키텍처</td><td class="td">ARMv8 Processor rev 4</td></tr>
+					<tr class="tr"><td class="td">펌웨어 버전</td><td class="td">OpenWrt 24.10.2 r28739 / LuCI 24.10</td></tr>
+					<tr class="tr"><td class="td">커널 버전</td><td class="td">6.6.93</td></tr>
+					<tr class="tr"><td class="td">가동 시간</td><td class="td" id="uptime">12d 4h 33m 10s</td></tr>
+					<tr class="tr"><td class="td">평균 부하</td><td class="td"><span class="label success">0.08</span> <span class="label">0.12</span> <span class="label warning">0.31</span></td></tr>
+				</table>
+			</div>
+
+			<div class="cbi-section">
+				<h3>메모리 &amp; 저장소</h3>
+				<table class="table">
+					<tr class="tr"><td class="td">사용 가능</td><td class="td"><div class="cbi-progressbar" title="742 MiB / 1024 MiB (72%)"><div style="width:72%"></div></div></td></tr>
+					<tr class="tr"><td class="td">버퍼</td><td class="td"><div class="cbi-progressbar" title="18 MiB / 1024 MiB (2%)"><div style="width:2%"></div></div></td></tr>
+					<tr class="tr"><td class="td">캐시</td><td class="td"><div class="cbi-progressbar" title="164 MiB / 1024 MiB (16%)"><div style="width:16%"></div></div></td></tr>
+					<tr class="tr"><td class="td">디스크 /overlay</td><td class="td"><div class="cbi-progressbar" title="2.1 GiB / 7.2 GiB (29%)"><div style="width:29%"></div></div></td></tr>
+					<tr class="tr"><td class="td">CPU</td><td class="td"><div class="cbi-progressbar" id="cpubar" title="CPU 23%"><div style="width:23%"></div></div></td></tr>
+				</table>
+			</div>
+		</div>
+
+		<div class="cbi-section">
+			<h3>실시간 트래픽 · wan</h3>
+			<svg class="chart" id="chart" viewBox="0 0 800 220" preserveAspectRatio="none">
+				<defs>
+					<linearGradient id="fillRx" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22d3ee" stop-opacity=".55"/><stop offset="1" stop-color="#22d3ee" stop-opacity="0"/></linearGradient>
+					<linearGradient id="fillTx" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f472b6" stop-opacity=".45"/><stop offset="1" stop-color="#f472b6" stop-opacity="0"/></linearGradient>
+					<filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+				</defs>
+				<g stroke="rgba(255,255,255,.06)"><line x1="0" y1="55" x2="800" y2="55"/><line x1="0" y1="110" x2="800" y2="110"/><line x1="0" y1="165" x2="800" y2="165"/></g>
+				<path id="aRx" fill="url(#fillRx)"/><path id="lRx" fill="none" stroke="#22d3ee" stroke-width="2.2" filter="url(#glow)"/>
+				<path id="aTx" fill="url(#fillTx)"/><path id="lTx" fill="none" stroke="#f472b6" stroke-width="2.2" filter="url(#glow)"/>
+			</svg>
+			<div class="chart-legend">
+				<span><i style="background:#22d3ee"></i>수신 <b id="rx">—</b></span>
+				<span><i style="background:#f472b6"></i>송신 <b id="tx">—</b></span>
+			</div>
+		</div>
+
+		<div class="cbi-section">
+			<h3>네트워크 인터페이스</h3>
+			<div class="network-status-table">
+				<div class="ifacebox"><div class="ifacebox-head active">WAN</div><div class="ifacebox-body"><span class="ifacebadge ifacebadge-active">eth1</span><span>203.0.113.42/24</span><span class="label success">연결됨 · 1 Gbps</span></div></div>
+				<div class="ifacebox"><div class="ifacebox-head active">LAN</div><div class="ifacebox-body"><span class="ifacebadge ifacebadge-active">br-lan</span><span>192.168.1.1/24</span><span class="label">클라이언트 14</span></div></div>
+				<div class="ifacebox"><div class="ifacebox-head">WG0</div><div class="ifacebox-body"><span class="ifacebadge">wg0</span><span>10.8.0.1/24</span><span class="label warning">대기</span></div></div>
+			</div>
+		</div>
+
+		<div class="cbi-section">
+			<h3>활성 DHCP 임대</h3>
+			<table class="table cbi-section-table">
+				<tr class="tr table-titles"><th class="th">호스트 이름</th><th class="th">IPv4 주소</th><th class="th">MAC 주소</th><th class="th">남은 임대 시간</th><th class="th"></th></tr>
+				<tr class="tr"><td class="td" data-title="호스트 이름">MacBook-Pro</td><td class="td" data-title="IPv4 주소">192.168.1.120</td><td class="td" data-title="MAC 주소"><code>A4:83:E7:12:9C:01</code></td><td class="td" data-title="남은 임대 시간">11h 42m</td><td class="td cbi-section-actions"><div><button class="cbi-button cbi-button-edit">편집</button><button class="cbi-button cbi-button-remove">삭제</button></div></td></tr>
+				<tr class="tr"><td class="td" data-title="호스트 이름">Galaxy-S26</td><td class="td" data-title="IPv4 주소">192.168.1.143</td><td class="td" data-title="MAC 주소"><code>5C:E9:1E:77:0B:3D</code></td><td class="td" data-title="남은 임대 시간">8h 03m</td><td class="td cbi-section-actions"><div><button class="cbi-button cbi-button-edit">편집</button><button class="cbi-button cbi-button-remove">삭제</button></div></td></tr>
+				<tr class="tr"><td class="td" data-title="호스트 이름">nas-synology</td><td class="td" data-title="IPv4 주소">192.168.1.10</td><td class="td" data-title="MAC 주소"><code>00:11:32:AF:44:90</code></td><td class="td" data-title="남은 임대 시간"><span class="label">고정</span></td><td class="td cbi-section-actions"><div><button class="cbi-button cbi-button-edit">편집</button><button class="cbi-button cbi-button-remove">삭제</button></div></td></tr>
+			</table>
+		</div>
+	</div>
+
+	<div class="cbi-map">
+		<h2>무선 설정</h2>
+		<!-- same markup ui.js Tabs.initTabGroup() produces -->
+		<ul class="cbi-tabmenu" id="demoTabs"><li class="cbi-tab" data-tab="general"><a href="#">일반 설정</a></li><li class="cbi-tab-disabled" data-tab="security"><a href="#">무선 보안</a></li><li class="cbi-tab-disabled" data-tab="macfilter" data-errors="1"><a href="#">MAC 필터</a></li></ul>
+		<div>
+		<div class="cbi-section" id="pane-general" data-tab="general" data-tab-title="일반 설정" data-tab-active="true">
+			<h3>인터페이스 구성 · radio1 (5 GHz)</h3>
+			<div class="cbi-section-node">
+				<div class="cbi-value"><label class="cbi-value-title">활성화</label><div class="cbi-value-field"><div class="cbi-checkbox"><input type="checkbox" checked><label></label></div></div></div>
+				<div class="cbi-value"><label class="cbi-value-title">ESSID</label><div class="cbi-value-field"><input class="cbi-input-text" type="text" value="Prism-5G"></div></div>
+				<div class="cbi-value"><label class="cbi-value-title">모드</label><div class="cbi-value-field"><select class="cbi-input-select"><option>액세스 포인트</option><option>클라이언트</option><option>메시 포인트</option></select></div></div>
+				<div class="cbi-value cbi-value-error"><label class="cbi-value-title">채널 폭</label><div class="cbi-value-field"><input class="cbi-input-text cbi-input-invalid" type="text" value="HE 240"><div class="cbi-value-description">허용 값: HE20, HE40, HE80, HE160</div></div></div>
+				<div class="cbi-value"><label class="cbi-value-title">암호</label><div class="cbi-value-field"><input class="cbi-input-password" type="password" value="supersecret"><div class="cbi-value-description">최소 8자 이상의 WPA3-SAE 키를 사용하세요.</div></div></div>
+				<div class="cbi-value"><label class="cbi-value-title">NTP 서버</label><div class="cbi-value-field"><div class="cbi-dynlist"><div class="item">0.openwrt.pool.ntp.org</div><div class="item">time.cloudflare.com</div><div class="add-item"><input class="cbi-input-text" type="text" placeholder="서버 추가…"><button class="cbi-button cbi-button-add">+</button></div></div></div></div>
+				<div class="cbi-value"><label class="cbi-value-title">WMM 모드</label><div class="cbi-value-field"><label><input type="radio" name="w" checked>켜기</label>&nbsp;&nbsp;<label><input type="radio" name="w">끄기</label></div></div>
+			</div>
+		</div>
+
+		<div class="cbi-section" id="pane-security" data-tab="security" data-tab-title="무선 보안" data-tab-active="false">
+			<h3>무선 보안</h3>
+			<div class="cbi-section-node">
+				<div class="cbi-value"><label class="cbi-value-title">암호화</label><div class="cbi-value-field"><select class="cbi-input-select"><option>WPA3-SAE</option><option>WPA2/WPA3 혼합</option></select></div></div>
+				<div class="cbi-value"><label class="cbi-value-title">802.11w 관리 프레임 보호</label><div class="cbi-value-field"><div class="cbi-checkbox"><input type="checkbox" checked><label></label></div></div></div>
+			</div>
+		</div>
+		<div class="cbi-section" id="pane-macfilter" data-tab="macfilter" data-tab-title="MAC 필터" data-tab-active="false">
+			<h3>MAC 주소 필터</h3>
+			<div class="cbi-section-node">
+				<div class="cbi-value"><label class="cbi-value-title">정책</label><div class="cbi-value-field"><select class="cbi-input-select"><option>비활성화</option><option>목록에 있는 것만 허용</option></select></div></div>
+			</div>
+		</div>
+		</div><!-- tab group -->
+
+		<div class="alert-message success">설정이 적용되었습니다. 30초 후 무선 인터페이스가 재시작됩니다.</div>
+		<div class="alert-message error"><h4>적용 실패</h4><p>구성 롤백 대기 중… 장치에 다시 연결할 수 없습니다.</p></div>
+		<p class="spinning">장치 응답 대기 중…</p>
+
+		<div class="cbi-page-actions">
+			<button class="cbi-button cbi-button-reset">초기화</button>
+			<button class="cbi-button cbi-button-save" id="openModal">저장</button>
+			<button class="cbi-button cbi-button-apply">저장 &amp; 적용</button>
+		</div>
+	</div>
+</div>
+
+<footer id="footer">
+	<span class="pulse"></span><span>Powered by LuCI openwrt-24.10</span><span class="sep">/</span><span>OpenWrt 24.10.2 (r28739)</span>
+	<span class="theme-name">Prism</span>
+</footer>
+</div>
+
+<div id="modal_overlay"><div class="modal">
+	<h4>구성 변경 사항</h4>
+	<div class="uci-change-list">
+		<var>wireless.radio1</var><ins>wireless.radio1.htmode='HE160'</ins><del>wireless.radio1.htmode='HE80'</del><ins>wireless.default_radio1.ssid='Prism-5G'</ins>
+	</div>
+	<div class="right"><button class="cbi-button cbi-button-neutral" id="closeModal">닫기</button><button class="cbi-button cbi-button-negative">되돌리기</button><button class="cbi-button cbi-button-positive">저장 &amp; 적용</button></div>
+</div></div>
+
+<script>
+/* ---- static stand-in for menu-prism.js (LuCI's ui.menu is not available here) ---- */
+const ICON = {
+	status: '<path d="M3 12h4l3-8 4 16 3-8h4"/>',
+	system: '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>',
+	services: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+	network: '<rect x="9" y="2" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="16" y="16" width="6" height="6" rx="1"/><path d="M12 8v4M5 16v-4h14v4"/>',
+	vpn: '<path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5z"/><path d="m9 12 2 2 4-4"/>',
+	statistics: '<path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 6-6"/>',
+	logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/>'
+};
+const MENU = [
+	['status', '상태', ['개요', '방화벽', '라우팅', '시스템 로그', '실시간 그래프']],
+	['system', '시스템', ['시스템', '관리', '소프트웨어', '시작 프로그램', '예약 작업', '백업 / 플래시']],
+	['services', '서비스', ['AdBlock', 'DDNS', 'UPnP IGD & PCP']],
+	['network', '네트워크', ['인터페이스', '무선', 'DHCP 및 DNS', '방화벽', '진단']],
+	['vpn', 'VPN', ['WireGuard', 'OpenVPN']],
+	['statistics', '통계', ['그래프', '설정']],
+	['logout', '로그아웃', []]
+];
+const nav = document.getElementById('topmenu');
+MENU.forEach(([key, title, subs], i) => {
+	const li = document.createElement('li');
+	const active = i === 0;
+	li.className = 'nav-group' + (subs.length ? '' : ' leaf') + (active ? ' active open' : '');
+	li.style.setProperty('--i', i);
+	const ico = `<span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICON[key]}</svg></span>`;
+	li.innerHTML = `<a class="nav-head" href="${subs.length ? '#' : 'login.html'}">${ico}<span class="nav-label">${title}</span>${subs.length ? '<span class="chev"></span>' : ''}</a>` +
+		(subs.length ? `<div class="nav-sub-wrap"><ul class="nav-sub">${subs.map((s, j) => `<li class="${active && j === 0 ? 'active' : ''}"><a href="#">${s}</a></li>`).join('')}</ul></div>` : '');
+	if (subs.length) li.firstChild.addEventListener('click', (e) => { e.preventDefault(); li.classList.toggle('open'); });
+	nav.appendChild(li);
+});
+
+document.getElementById('navtoggle').onclick = () => document.body.classList.toggle('nav-open');
+document.getElementById('scrim').onclick = () => document.body.classList.remove('nav-open');
+
+const clock = document.getElementById('clock');
+const tick = () => clock.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+tick(); setInterval(tick, 1000);
+
+document.addEventListener('pointermove', (ev) => {
+	const card = ev.target.closest('.cbi-section');
+	if (!card) return;
+	const r = card.getBoundingClientRect();
+	card.style.setProperty('--mx', (ev.clientX - r.left) + 'px');
+	card.style.setProperty('--my', (ev.clientY - r.top) + 'px');
+}, { passive: true });
+
+const overlay = document.getElementById('modal_overlay');
+document.getElementById('openModal').onclick = () => document.body.classList.add('modal-overlay-active');
+document.getElementById('closeModal').onclick = () => document.body.classList.remove('modal-overlay-active');
+overlay.onclick = (e) => { if (e.target === overlay) document.body.classList.remove('modal-overlay-active'); };
+
+/* ---- tab switching: mirrors ui.js Tabs.switchTab() (only attributes/classes change) ---- */
+document.querySelectorAll('#demoTabs > li > a').forEach((a) => a.addEventListener('click', (ev) => {
+	ev.preventDefault();
+	const tab = ev.target.parentNode, name = tab.getAttribute('data-tab'), menu = tab.parentNode, group = menu.nextElementSibling;
+	if (!tab.classList.contains('cbi-tab-disabled')) return;
+	menu.querySelectorAll('[data-tab]').forEach((t) => { t.classList.remove('cbi-tab', 'cbi-tab-disabled'); t.classList.add(t.getAttribute('data-tab') === name ? 'cbi-tab' : 'cbi-tab-disabled'); });
+	group.querySelectorAll(':scope > [data-tab]').forEach((p) => p.setAttribute('data-tab-active', p.getAttribute('data-tab') === name ? 'true' : 'false'));
+}));
+
+/* ---- live traffic chart ---- */
+const N = 60, W = 800, H = 220;
+const rx = Array.from({ length: N }, (_, i) => 60 + 40 * Math.sin(i / 6) + Math.random() * 30);
+const tx = Array.from({ length: N }, (_, i) => 25 + 15 * Math.cos(i / 5) + Math.random() * 12);
+const toPath = (arr, max) => arr.map((v, i) => `${i ? 'L' : 'M'}${(i / (N - 1) * W).toFixed(1)},${(H - v / max * (H - 20)).toFixed(1)}`).join('');
+const draw = () => {
+	const max = Math.max(...rx, ...tx) * 1.15;
+	const l1 = toPath(rx, max), l2 = toPath(tx, max);
+	document.getElementById('lRx').setAttribute('d', l1);
+	document.getElementById('aRx').setAttribute('d', l1 + `L${W},${H}L0,${H}Z`);
+	document.getElementById('lTx').setAttribute('d', l2);
+	document.getElementById('aTx').setAttribute('d', l2 + `L${W},${H}L0,${H}Z`);
+	document.getElementById('rx').textContent = (rx[N - 1] / 10).toFixed(2) + ' Mbit/s';
+	document.getElementById('tx').textContent = (tx[N - 1] / 10).toFixed(2) + ' Mbit/s';
+};
+draw();
+setInterval(() => {
+	rx.shift(); rx.push(Math.max(10, rx[N - 2] + (Math.random() - .45) * 30));
+	tx.shift(); tx.push(Math.max(5, tx[N - 2] + (Math.random() - .5) * 12));
+	draw();
+	const cpu = Math.round(10 + Math.random() * 45);
+	const bar = document.getElementById('cpubar');
+	bar.title = `CPU ${cpu}%`; bar.firstChild.style.width = cpu + '%';
+}, 1000);
+</script>
+</body>
+</html>

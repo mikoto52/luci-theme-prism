@@ -1,0 +1,189 @@
+/* ==========================================================================
+   Prism · core — tokens, aurora background, typography
+   ========================================================================== */
+
+:root {
+	color-scheme: dark;
+
+	/* surfaces */
+	--bg:            #07060f;
+	--bg-2:          #0d0b1c;
+	--glass:         rgba(22, 19, 44, .55);
+	--glass-strong:  rgba(28, 24, 56, .78);
+	--glass-hi:      rgba(255, 255, 255, .06);
+	--line:          rgba(255, 255, 255, .09);
+	--line-strong:   rgba(255, 255, 255, .16);
+
+	/* ink */
+	--ink:           #ecebff;
+	--ink-2:         #b7b3d9;
+	--ink-3:         #7d78a6;
+
+	/* neon spectrum */
+	--cyan:          #22d3ee;
+	--violet:        #a855f7;
+	--pink:          #f472b6;
+	--lime:          #a3e635;
+	--amber:         #fbbf24;
+	--red:           #fb7185;
+	--green:         #34d399;
+
+	--spectrum:      linear-gradient(115deg, var(--cyan) 0%, var(--violet) 50%, var(--pink) 100%);
+	--spectrum-soft: linear-gradient(115deg, rgba(34,211,238,.18), rgba(168,85,247,.18), rgba(244,114,182,.18));
+	--accent:        var(--violet);
+
+	/* shape & motion */
+	--r-sm:  8px;
+	--r-md:  14px;
+	--r-lg:  22px;
+	--ease:  cubic-bezier(.2, .8, .2, 1);
+	--blur:  saturate(160%) blur(22px);
+	--shadow: 0 1px 0 rgba(255,255,255,.06) inset, 0 20px 50px -20px rgba(0,0,0,.7);
+	--glow:   0 0 0 1px rgba(168,85,247,.45), 0 0 24px -2px rgba(168,85,247,.55);
+
+	--sidebar-w: 272px;
+	--topbar-h:  68px;
+
+	--font: "Inter", "Pretendard", "Segoe UI Variable", "Segoe UI", system-ui, -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", Roboto, sans-serif;
+	--mono: "JetBrains Mono", "Cascadia Code", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+@media (prefers-color-scheme: light) {
+	:root.prism-follow-system {
+		color-scheme: light;
+		--bg: #f4f2ff; --bg-2: #ebe7ff;
+		--glass: rgba(255,255,255,.62); --glass-strong: rgba(255,255,255,.85); --glass-hi: rgba(80,60,160,.05);
+		--line: rgba(40,20,90,.1); --line-strong: rgba(40,20,90,.18);
+		--ink: #1b1740; --ink-2: #4a4575; --ink-3: #8a86ad;
+		--shadow: 0 1px 0 rgba(255,255,255,.8) inset, 0 20px 40px -24px rgba(60,40,140,.35);
+	}
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+body {
+	margin: 0;
+	min-height: 100vh;
+	background: var(--bg);
+	color: var(--ink);
+	font: 14px/1.55 var(--font);
+	font-feature-settings: "cv11", "ss01", "tnum";
+	-webkit-font-smoothing: antialiased;
+	overflow-x: hidden;
+}
+
+/* ---------- aurora background ---------- */
+
+.prism-bg {
+	position: fixed;
+	inset: 0;
+	z-index: -1;
+	overflow: hidden;
+	pointer-events: none;
+	background:
+		radial-gradient(1200px 800px at 110% -10%, rgba(168,85,247,.20), transparent 60%),
+		radial-gradient(900px 700px at -10% 110%, rgba(34,211,238,.16), transparent 60%),
+		linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
+}
+
+.prism-bg .orb {
+	position: absolute;
+	width: 46vmax;
+	height: 46vmax;
+	border-radius: 50%;
+	filter: blur(90px);
+	opacity: .55;
+	mix-blend-mode: screen;
+	will-change: transform;
+}
+
+.prism-bg .o1 { background: radial-gradient(circle, #7c3aed 0%, transparent 65%); top: -18vmax; left: 10vw; animation: drift1 26s var(--ease) infinite alternate; }
+.prism-bg .o2 { background: radial-gradient(circle, #06b6d4 0%, transparent 65%); bottom: -22vmax; right: -6vw; animation: drift2 32s var(--ease) infinite alternate; }
+.prism-bg .o3 { background: radial-gradient(circle, #db2777 0%, transparent 65%); top: 30vh; left: 55vw; width: 30vmax; height: 30vmax; opacity: .35; animation: drift3 22s var(--ease) infinite alternate; }
+
+.prism-bg .grid {
+	position: absolute;
+	inset: -50% -50% 0 -50%;
+	background-image:
+		linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+		linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+	background-size: 56px 56px;
+	transform: perspective(900px) rotateX(62deg) translateY(30%);
+	mask-image: linear-gradient(to top, #000 0%, transparent 60%);
+	-webkit-mask-image: linear-gradient(to top, #000 0%, transparent 60%);
+	animation: gridflow 18s linear infinite;
+}
+
+.prism-bg .noise {
+	position: absolute;
+	inset: 0;
+	opacity: .05;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@keyframes drift1 { to { transform: translate(18vw, 14vh) scale(1.15); } }
+@keyframes drift2 { to { transform: translate(-22vw, -10vh) scale(.9); } }
+@keyframes drift3 { to { transform: translate(-30vw, 18vh) scale(1.25); } }
+@keyframes gridflow { to { background-position: 0 56px, 0 0; } }
+@keyframes shimmer { to { background-position: 200% 0; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(52,211,153,.6); } 60% { box-shadow: 0 0 0 8px rgba(52,211,153,0); } }
+@keyframes hue { to { filter: hue-rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+	*, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+}
+
+/* ---------- typography ---------- */
+
+h1, h2, h3, h4, h5 { margin: 0 0 .6em; line-height: 1.25; font-weight: 650; letter-spacing: -.01em; color: var(--ink); }
+
+h2 {
+	font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.2rem);
+	font-weight: 750;
+	letter-spacing: -.025em;
+	background: linear-gradient(100deg, #fff 0%, #d9ccff 40%, var(--cyan) 70%, var(--pink) 100%);
+	background-size: 200% 100%;
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+	animation: shimmer 9s linear infinite;
+}
+
+h3 { font-size: 1.05rem; }
+h4 { font-size: .95rem; }
+p  { margin: 0 0 1em; }
+
+a { color: var(--cyan); text-decoration: none; transition: color .2s; }
+a:hover { color: #fff; }
+
+code, pre, kbd, samp, textarea.cbi-input-textarea { font-family: var(--mono); font-size: .92em; }
+code { padding: .1em .4em; border-radius: 6px; background: rgba(168,85,247,.14); color: #e9d5ff; }
+pre  { padding: 1em; border-radius: var(--r-md); background: rgba(0,0,0,.35); border: 1px solid var(--line); overflow: auto; }
+
+hr { border: 0; height: 1px; background: var(--spectrum); opacity: .35; margin: 1.5em 0; }
+
+::selection { background: rgba(168,85,247,.45); color: #fff; }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); border-radius: 10px; border: 3px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background-color: rgba(168,85,247,.5); }
+* { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.14) transparent; }
+
+/* ---------- LuCI utility classes ---------- */
+
+.hidden, [hidden] { display: none !important; }
+.left   { text-align: left !important; }
+.right  { text-align: right !important; }
+.center { text-align: center !important; }
+.top    { vertical-align: top !important; }
+.middle { vertical-align: middle !important; }
+.bottom { vertical-align: bottom !important; }
+.pull-left  { float: left; }
+.pull-right { float: right; }
+.nowrap { white-space: nowrap; }
+.cbi-value-helpicon > img { display: none; }
