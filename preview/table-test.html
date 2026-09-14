@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prism · status table harness</title>
+<link rel="stylesheet" href="../htdocs/luci-static/prism/cascade.css">
+</head>
+<body data-page="admin-status-overview">
+<div class="prism-bg" aria-hidden="true">
+	<span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span>
+	<span class="grid"></span><span class="noise"></span>
+</div>
+
+<div id="shell">
+<header id="topbar">
+	<button id="navtoggle" type="button" aria-label="Menu"><span></span><span></span><span></span></button>
+	<div class="page-title"><small>OpenWrt</small><strong>Overview</strong></div>
+	<div class="topbar-right"><div id="indicators"><span data-indicator="poll-status" data-clickable data-style="active">Refreshing</span></div></div>
+</header>
+
+<div id="maincontent" class="container">
+	<!-- same wrapper view/status/index.js builds; tables as 40_dhcp.js builds them -->
+	<div class="cbi-section">
+		<div class="cbi-title"><h3 style="display: flex; justify-content: space-between">DHCP Leases<span class="label" data-indicator="poll-status" data-clickable="true" data-style="inactive">Hide</span></h3></div>
+		<div id="box">
+			<h3>Active DHCPv4 Leases</h3>
+			<table id="status_leases" class="table leases">
+				<tr class="tr table-titles"><th class="th">Hostname</th><th class="th">IPv4 address</th><th class="th">MAC address</th><th class="th">DUID</th><th class="th">IAID</th><th class="th">Remaining time</th><th class="th cbi-section-actions">Static Lease</th></tr>
+			</table>
+			<h3>Active DHCPv6 Leases</h3>
+			<table id="status_leases6" class="table leases6">
+				<tr class="tr table-titles"><th class="th">Interface</th><th class="th">Hostname</th><th class="th">IPv6 addresses</th><th class="th">DUID</th><th class="th">IAID</th><th class="th">Remaining time</th><th class="th cbi-section-actions">Static Lease</th></tr>
+				<tr class="tr placeholder"><td class="td"><em>No active leases</em></td></tr>
+			</table>
+		</div>
+	</div>
+
+	<div class="cbi-section">
+		<div class="cbi-title"><h3>System</h3></div>
+		<table class="table" id="kv">
+			<tr class="tr"><td class="td left" width="33%">Hostname</td><td class="td left">OpenWrt</td></tr>
+			<tr class="tr"><td class="td left" width="33%">Firmware Version</td><td class="td left">OpenWrt 25.12.1 r32768-b21cfa8f8c / LuCI openwrt-25.12 branch 26.081.55261~f218c93</td></tr>
+		</table>
+	</div>
+</div>
+</div>
+
+<script>
+/* rows arrive after first render and are replaced on every poll, like cbi_update_table */
+const leases = [
+	[ 'rexdsm (rexdsm.lan)', '10.0.0.179', 'BC:24:11:4C:29:D1', '-', '-', '9h 29m 50s' ],
+	[ 'Bedroom (Bedroom.lan)', '10.0.0.150', 'C0:95:6D:85:B4:CF', '-', '-', '7h 5m 26s' ],
+	[ '-', '10.0.0.116', '34:19:4D:22:64:24', '-', '-', '10h 27m 17s' ],
+	[ 'ubuntuvm (ubuntuvm.lan)', '10.0.0.180', 'BC:24:11:CE:EB:5C', '00020000ab11fffdfe00a3994867', '7409e913', '7h 12m 34s' ]
+];
+
+function update() {
+	const table = document.getElementById('status_leases');
+	table.querySelectorAll('.tr:not(.table-titles)').forEach((tr) => tr.remove());
+	for (const row of leases) {
+		const tr = document.createElement('tr');
+		tr.className = 'tr';
+		for (const v of row) { const td = document.createElement('td'); td.className = 'td'; td.textContent = v; tr.appendChild(td); }
+		const td = document.createElement('td');
+		td.className = 'td';
+		td.innerHTML = '<button class="cbi-button cbi-button-apply">Reserve IP</button>';
+		tr.appendChild(td);
+		table.appendChild(tr);
+	}
+}
+
+/* load the real menu-prism.js with stand-ins; only initChrome() matters here */
+(async () => {
+	window.L = { env: {}, bind: (fn, ctx, ...args) => fn.bind(ctx, ...args) };
+	const src = await fetch('../htdocs/luci-static/resources/menu-prism.js', { cache: 'no-store' }).then((r) => r.text());
+	const baseclass = { extend: (proto) => { const C = function () {}; C.prototype = proto; return C; } };
+	const ui = { menu: { load: () => new Promise(() => {}) } };
+	const Menu = new Function('baseclass', 'ui', src)(baseclass, ui);
+	new Menu().__init__();
+
+	setTimeout(update, 200);
+	setInterval(update, 5000);
+})().catch((e) => document.body.insertAdjacentHTML('beforeend', `<pre id="err">${e.stack}</pre>`));
+</script>
+</body>
+</html>

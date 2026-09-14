@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prism · wireless modal harness</title>
+<link rel="stylesheet" href="../htdocs/luci-static/prism/cascade.css">
+</head>
+<body class="modal-overlay-active">
+<div class="prism-bg" aria-hidden="true">
+	<span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span>
+	<span class="grid"></span><span class="noise"></span>
+</div>
+
+<!-- markup shape of Network → Wireless → Edit: a NamedSection whose first option is
+     form.SectionValue('_device', …, 'Device Configuration') rendering a nested tabbed section -->
+<div id="modal_overlay">
+	<div class="modal cbi-modal" role="dialog" aria-modal="true">
+		<h4>Wireless Network: Access Point "Rinne Utopia" (phy2-ap0)</h4>
+		<div class="cbi-map" id="cbi-wireless">
+			<div class="cbi-section" id="cbi-wireless-wifi-iface">
+				<div class="cbi-section-node" id="cbi-wireless-default_radio2">
+					<div class="cbi-value" id="cbi-wireless-default_radio2-_device" data-name="_device" data-widget="CBI.ContainerValue">
+						<div class="cbi-section" id="inner-device">
+							<h3>Device Configuration</h3>
+							<div class="cbi-section-node cbi-section-node-tabbed">
+								<ul class="cbi-tabmenu" id="tabs">
+									<li class="cbi-tab" data-tab="general"><a href="#">General Setup</a></li>
+									<li class="cbi-tab-disabled" data-tab="advanced"><a href="#">Advanced Settings</a></li>
+								</ul>
+								<div>
+									<div class="cbi-tabcontainer" data-tab="general" data-tab-title="General Setup" data-tab-active="true">
+										<div class="cbi-value"><label class="cbi-value-title">Status</label><div class="cbi-value-field"><span class="ifacebadge">Mode: Master | SSID: Rinne Utopia · Channel 11 (2.462 GHz)</span></div></div>
+										<div class="cbi-value"><label class="cbi-value-title">Wireless network is enabled</label><div class="cbi-value-field"><button class="cbi-button cbi-button-neutral">Disable</button></div></div>
+										<div class="cbi-value" id="freq"><label class="cbi-value-title">Operating frequency</label><div class="cbi-value-field">
+											<div>Mode <select class="cbi-input-select" style="width:auto"><option>AX</option></select></div>
+											<div>Channel <select class="cbi-input-select" style="width:auto"><option>auto</option></select></div>
+											<div class="cbi-value-description" id="desc">Some channels may be restricted to Indoor Only use by your Regulatory Domain. Make sure to follow this advice if a channel is so marked.</div>
+										</div></div>
+									</div>
+									<div class="cbi-tabcontainer" data-tab="advanced" data-tab-title="Advanced Settings" data-tab-active="false">
+										<div class="cbi-value"><label class="cbi-value-title">Country Code</label><div class="cbi-value-field"><select class="cbi-input-select"><option>US</option></select></div></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="cbi-value"><label class="cbi-value-title">ESSID</label><div class="cbi-value-field"><input class="cbi-input-text" type="text" value="Rinne Utopia"></div></div>
+				</div>
+			</div>
+		</div>
+		<div class="right"><button class="cbi-button cbi-button-neutral">Dismiss</button><button class="cbi-button cbi-button-positive">Save</button></div>
+	</div>
+</div>
+</body>
+</html>
