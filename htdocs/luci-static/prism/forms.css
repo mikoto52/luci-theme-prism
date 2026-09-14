@@ -4,10 +4,13 @@
 
 /* ---------- form rows ---------- */
 
+/* flex-wrap, not a 2-column grid: rows may hold things other than title + field,
+   e.g. form.SectionValue puts a whole .cbi-section straight into .cbi-value
+   (wireless "Device Configuration" dialog), which must span the full row */
 .cbi-value {
-	display: grid;
-	grid-template-columns: minmax(160px, 30%) 1fr;
-	align-items: start;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
 	gap: 8px 24px;
 	padding: 14px 4px;
 	border-bottom: 1px solid var(--line);
@@ -15,12 +18,16 @@
 .cbi-value:last-child, .cbi-value-last { border-bottom: 0; }
 
 .cbi-value-title {
+	flex: 0 0 clamp(160px, 28%, 260px);
 	padding-top: 9px;
 	font-weight: 600;
 	color: var(--ink-2);
 }
 
-.cbi-value-field { min-width: 0; }
+.cbi-value-field { flex: 1 1 260px; min-width: 0; }
+
+.cbi-value > .cbi-section, .cbi-value > .cbi-tblsection { flex: 1 1 100%; width: 100%; min-width: 0; margin: 0; }
+.cbi-value:has(> .cbi-section, > .cbi-tblsection) { padding-inline: 0; border-bottom: 0; }
 .cbi-value-field > * { max-width: 100%; }
 
 .cbi-value-description {
@@ -416,7 +423,8 @@ input[type="file"]::file-selector-button {
 /* ---------- responsive ---------- */
 
 @media (max-width: 767px) {
-	.cbi-value { grid-template-columns: 1fr; gap: 6px; padding: 12px 2px; }
+	.cbi-value { gap: 6px; padding: 12px 2px; }
+	.cbi-value-title, .cbi-value-field { flex-basis: 100%; }
 	.cbi-value-title { padding-top: 0; }
 	input[type="text"], input[type="password"], input[type="number"], select, textarea,
 	.cbi-input-text, .cbi-input-password, .cbi-input-select, .cbi-dropdown, .cbi-dynlist { width: 100%; }

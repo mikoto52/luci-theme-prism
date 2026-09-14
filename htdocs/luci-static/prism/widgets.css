@@ -176,6 +176,8 @@
 .zonebadge { color: #120f24; font-weight: 650; border-color: rgba(0,0,0,.15); text-shadow: none; }
 .zonebadge .ifacebadge { color: var(--ink); background: rgba(15,12,30,.75); }
 .ifacebadge-active { border-color: var(--green); box-shadow: 0 0 12px -2px rgba(52,211,153,.6); }
+/* status badges inside form fields (wireless dialog) carry multi-line details */
+.cbi-value-field .ifacebadge { max-width: 100%; white-space: normal; flex-wrap: wrap; }
 
 /* network interface boxes (Network → Interfaces) */
 .ifacebox {
@@ -606,4 +608,9 @@ svg text { fill: var(--ink-2); }
 	.table.cbi-section-table .td.cbi-section-actions { flex-basis: 100%; text-align: left; }
 
 	.cbi-section > .table:not(.cbi-section-table) .tr > .td:first-child { width: 42%; }
+
+	/* dialogs nest map → section → SectionValue → section; padding stacks up fast on phones */
+	#modal_overlay > .modal { width: calc(100vw - 16px); margin: 8px auto; padding: 18px 12px; border-radius: 18px; }
+	#modal_overlay .cbi-section { padding: 12px 10px; border-radius: 14px; }
+	#modal_overlay .cbi-section .cbi-section { padding: 10px 8px; }
 }

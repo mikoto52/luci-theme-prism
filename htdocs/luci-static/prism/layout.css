@@ -393,6 +393,7 @@ body.is-leaving::before { width: 88%; }
 	.clock { display: none; }
 	#indicators > [data-indicator] { padding: 5px 9px; font-size: .72rem; }
 	.page-title small { display: none; }
-	.tabs, .cbi-tabmenu { flex-wrap: nowrap; overflow-x: auto; width: 100%; }
+	.tabs, .cbi-tabmenu { flex-wrap: nowrap; overflow-x: auto; width: 100%; scrollbar-width: none; }
+	.tabs::-webkit-scrollbar, .cbi-tabmenu::-webkit-scrollbar { display: none; }
 	.tabs > li > a, .cbi-tabmenu > li > a { white-space: nowrap; }
 }
