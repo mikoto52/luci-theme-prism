@@ -20,8 +20,7 @@ if [ "$1" = "uninstall" ]; then
 	uci -q delete luci.themes.Prism || true
 	uci commit luci
 	rm -rf "$WWW/prism" "$TPL" "$PREV" \
-		"$WWW/resources/menu-prism.js" \
-		"$WWW/resources/view/status/include/15_prism_traffic.js"
+		"$WWW/resources/menu-prism.js"
 	clear_cache
 	echo "Prism removed, theme restored to $prev"
 	exit 0
